@@ -3,12 +3,15 @@ import {
   View,
   Text,
   TextInput,
+  Image,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+
+const APP_LOGO = require("../../assets/logo.png");
 import { FadeIn } from "../components/FadeIn";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
@@ -69,10 +72,8 @@ export const LoginScreen: React.FC = () => {
       <View style={styles.content}>
         {/* Logo */}
         <FadeIn direction="down" duration={600} style={styles.logoContainer}>
-          <View style={styles.logoCircle}>
-            <Ionicons name="wine" size={40} color="#fff" />
-          </View>
-          <Text style={styles.appName}>Daily Drink{"\n"}Companion</Text>
+          <Image source={APP_LOGO} style={styles.logoImage} resizeMode="contain" />
+          <Text style={styles.appName}>Drink Now</Text>
           <Text style={styles.tagline}>
             {step === "email"
               ? "Sign in to save your favorites and preferences"
@@ -183,19 +184,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
   },
-  logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 24,
-    backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
+  logoImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 22,
     marginBottom: 20,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
   },
   appName: {
     fontSize: 28,

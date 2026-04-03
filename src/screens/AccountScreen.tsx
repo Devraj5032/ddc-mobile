@@ -247,7 +247,7 @@ export const AccountScreen: React.FC = () => {
               </View>
               <View>
                 <Text style={styles.menuLabel}>Made with love</Text>
-                <Text style={styles.menuValue}>Daily Drink Companion</Text>
+                <Text style={styles.menuValue}>Drink Now</Text>
               </View>
             </View>
           </View>

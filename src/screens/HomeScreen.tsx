@@ -11,6 +11,8 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
+
+const APP_LOGO = require("../../assets/logo.png");
 import { FadeIn } from "../components/FadeIn";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -132,12 +134,9 @@ export const HomeScreen: React.FC = () => {
       {/* Colored Header Block */}
       <View style={styles.headerBlock}>
         <View style={styles.headerTop}>
-          <View style={styles.logo}>
-            <Ionicons name="wine" size={24} color="#fff" />
-          </View>
+          <Image source={APP_LOGO} style={styles.logoImg} resizeMode="contain" />
           <View style={{ flex: 1 }}>
-            <Text style={styles.greeting}>Daily Drink</Text>
-            <Text style={styles.greeting}>Companion</Text>
+            <Text style={styles.greeting}>Drink Now</Text>
           </View>
         </View>
         <Text style={styles.subtitle}>What are you drinking today?</Text>
@@ -356,13 +355,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 14,
   },
-  logo: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    alignItems: "center",
-    justifyContent: "center",
+  logoImg: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
   },
   greeting: {
     fontSize: 21,

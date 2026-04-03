@@ -1,11 +1,7 @@
 import { Drink, Ingredient, User } from "../types";
 import { normalizeDrink, normalizeDrinks } from "../utils/normalizeDrink";
 
-// Change this to your server URL
-// const API_BASE = "http://10.0.2.2:3000/api"; // Android emulator
-const API_BASE = "http://192.168.29.105:3000/api";
-// const API_BASE = "http://localhost:3000/api"; // iOS simulator
-// const API_BASE = "http://YOUR_IP:3000/api"; // Physical device
+const API_BASE = "https://ddc-server.onrender.com/api";
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
