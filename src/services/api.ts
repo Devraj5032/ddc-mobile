@@ -3,14 +3,35 @@ import { normalizeDrink, normalizeDrinks } from "../utils/normalizeDrink";
 
 const API_BASE = "https://ddc-server.onrender.com/api";
 
+const TIMEOUT = 30000; // 30s for Render cold starts
+
+async function fetchWithRetry(url: string, options?: RequestInit, retries = 2): Promise<Response> {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT);
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timer);
+      if (res.ok) return res;
+      if (res.status >= 500 && i < retries) continue; // retry on server error
+      return res;
+    } catch (err: any) {
+      if (i === retries) throw err;
+      // Wait 1s before retry
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+  throw new Error("Request failed");
+}
+
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url);
+  const res = await fetchWithRetry(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 async function postJson<T>(url: string, body: object): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetchWithRetry(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -20,7 +41,7 @@ async function postJson<T>(url: string, body: object): Promise<T> {
 }
 
 async function putJson<T>(url: string, body: object): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetchWithRetry(url, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
