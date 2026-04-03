@@ -21,9 +21,6 @@
     "web": {
       "favicon": "./assets/logo.png"
     },
-    "plugins": [
-      "expo-asset"
-    ],
     "owner": "dev5032",
     "extra": {
       "eas": {
