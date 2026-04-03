@@ -16,10 +16,6 @@
       "bundleIdentifier": "com.drinknow.app"
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#5224B5",
-        "foregroundImage": "./assets/logo.png"
-      },
       "package": "com.drinknow.app"
     },
     "web": {
@@ -27,6 +23,12 @@
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "owner": "dev5032",
+    "extra": {
+      "eas": {
+        "projectId": "8bd971fc-0afd-47a8-a0b8-bab44b9f4adb"
+      }
+    }
   }
 }
