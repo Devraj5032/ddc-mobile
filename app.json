@@ -16,7 +16,8 @@
       "bundleIdentifier": "com.drinknow.app"
     },
     "android": {
-      "package": "com.drinknow.app"
+      "package": "com.drinknow.app",
+      "newArchEnabled": false
     },
     "web": {
       "favicon": "./assets/logo.png"
