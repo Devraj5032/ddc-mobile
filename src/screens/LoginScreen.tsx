@@ -56,7 +56,7 @@ export const LoginScreen: React.FC = () => {
     setError("");
     try {
       const result = await api.verifyOtp(email.toLowerCase().trim(), otp);
-      login(result.user);
+      login(result.user, result.token);
     } catch {
       setError("Invalid or expired code");
     } finally {

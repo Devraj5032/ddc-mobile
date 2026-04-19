@@ -44,7 +44,6 @@ export const AccountScreen: React.FC = () => {
     setSaving(true);
     try {
       const updated = await api.updateProfile({
-        email: user.email,
         [editing]: fieldValue.trim(),
       });
       updateUser(updated);

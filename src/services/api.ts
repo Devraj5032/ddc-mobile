@@ -5,6 +5,22 @@ const API_BASE = "https://ddc-server.onrender.com/api";
 
 const TIMEOUT = 30000; // 30s for Render cold starts
 
+let authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+}
+
+export function getAuthToken(): string | null {
+  return authToken;
+}
+
+function authHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+  return headers;
+}
+
 async function fetchWithRetry(url: string, options?: RequestInit, retries = 2): Promise<Response> {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -25,15 +41,15 @@ async function fetchWithRetry(url: string, options?: RequestInit, retries = 2): 
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetchWithRetry(url);
+  const res = await fetchWithRetry(url, { headers: authHeaders() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-async function postJson<T>(url: string, body: object): Promise<T> {
+async function postJson<T>(url: string, body: object, useAuth = true): Promise<T> {
   const res = await fetchWithRetry(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: useAuth ? authHeaders() : { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -43,7 +59,7 @@ async function postJson<T>(url: string, body: object): Promise<T> {
 async function putJson<T>(url: string, body: object): Promise<T> {
   const res = await fetchWithRetry(url, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -111,16 +127,15 @@ export const api = {
 
   // ─── Auth ─────────────────────────────────────
   sendOtp: (email: string) =>
-    postJson<{ ok: boolean; message: string }>(`${API_BASE}/auth/send-otp`, { email }),
+    postJson<{ ok: boolean; message: string }>(`${API_BASE}/auth/send-otp`, { email }, false),
 
   verifyOtp: (email: string, code: string) =>
-    postJson<{ ok: boolean; user: User }>(`${API_BASE}/auth/verify-otp`, { email, code }),
+    postJson<{ ok: boolean; user: User; token: string }>(`${API_BASE}/auth/verify-otp`, { email, code }, false),
 
-  getMe: (email: string) =>
-    fetchJson<User>(`${API_BASE}/auth/me?email=${encodeURIComponent(email)}`),
+  getMe: () =>
+    fetchJson<User>(`${API_BASE}/auth/me`),
 
   updateProfile: (data: {
-    email: string;
     name?: string;
     phone?: string;
     dateOfBirth?: string;

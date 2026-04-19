@@ -2,11 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../types";
 import { api } from "../services/api";
+import { setAuthToken } from "../services/api";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (user: User) => void;
+  login: (user: User, token: string) => void;
   logout: () => void;
   updateUser: (user: User) => void;
 }
@@ -26,28 +27,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem("ddc_user_email").then(async (email) => {
-      if (email) {
+    AsyncStorage.getItem("ddc_auth_token").then(async (token) => {
+      if (token) {
+        setAuthToken(token);
         try {
-          const userData = await api.getMe(email);
+          const userData = await api.getMe();
           setUser(userData);
         } catch {
-          // Session expired or user deleted
-          await AsyncStorage.removeItem("ddc_user_email");
+          // Token expired or invalid
+          setAuthToken(null);
+          await AsyncStorage.removeItem("ddc_auth_token");
         }
       }
       setIsLoading(false);
     });
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User, token: string) => {
+    setAuthToken(token);
     setUser(userData);
-    AsyncStorage.setItem("ddc_user_email", userData.email);
+    AsyncStorage.setItem("ddc_auth_token", token);
   };
 
   const logout = () => {
+    setAuthToken(null);
     setUser(null);
-    AsyncStorage.removeItem("ddc_user_email");
+    AsyncStorage.removeItem("ddc_auth_token");
   };
 
   const updateUser = (userData: User) => {
